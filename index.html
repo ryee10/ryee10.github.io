@@ -1,8 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>2048 LLiana Edition</title>
+  <meta charset="UTF-8" />
+  <title>2048 – ILY Edition</title>
+
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -24,13 +25,13 @@
     .cell {
       width: 100px;
       height: 100px;
-      background: #cdc1b4;
+      border-radius: 5px;
       display: flex;
       justify-content: center;
       align-items: center;
       font-size: 28px;
       font-weight: bold;
-      border-radius: 5px;
+      transition: background 0.2s ease, transform 0.1s ease;
     }
 
     .popup {
@@ -40,6 +41,7 @@
       display: none;
       justify-content: center;
       align-items: center;
+      z-index: 10;
     }
 
     .popup-content {
@@ -47,96 +49,137 @@
       padding: 40px;
       font-size: 32px;
       border-radius: 10px;
+      text-align: center;
     }
   </style>
 </head>
 <body>
 
-<div class="grid" id="grid"></div>
+  <div class="grid" id="grid"></div>
 
-<div class="popup" id="popup">
-  <div class="popup-content">💖 ILY 💖</div>
-</div>
+  <div class="popup" id="popup">
+    <div class="popup-content">💖 ILY 💖</div>
+  </div>
 
-<script>
-  const gridElement = document.getElementById("grid");
-  const popup = document.getElementById("popup");
+  <script>
+    const gridElement = document.getElementById("grid");
+    const popup = document.getElementById("popup");
 
-  let grid = Array(4).fill().map(() => Array(4).fill(0));
-  let popupShown = false;
+    let popupShown = false;
 
-  function init() {
-    addRandomTile();
-    addRandomTile();
-    render();
-  }
+    const tileColors = {
+      0: "#cdc1b4",
+      2: "#eee4da",
+      4: "#ede0c8",
+      8: "#f2b179",
+      16: "#f59563",
+      32: "#f67c5f",
+      64: "#f65e3b",
+      128: "#edcf72"
+    };
 
-  function addRandomTile() {
-    const empty = [];
-    for (let r = 0; r < 4; r++) {
-      for (let c = 0; c < 4; c++) {
-        if (grid[r][c] === 0) empty.push([r, c]);
-      }
+    let grid = Array.from({ length: 4 }, () => Array(4).fill(0));
+
+    function init() {
+      addRandomTile();
+      addRandomTile();
+      render();
     }
-    if (empty.length === 0) return;
-    const [r, c] = empty[Math.floor(Math.random() * empty.length)];
-    grid[r][c] = Math.random() < 0.9 ? 2 : 4;
-  }
 
-  function render() {
-    gridElement.innerHTML = "";
-    grid.flat().forEach(value => {
-      const cell = document.createElement("div");
-      cell.className = "cell";
-      cell.textContent = value === 0 ? "" : value;
-      gridElement.appendChild(cell);
-
-      if (value === 16 && !popupShown) {
-        popup.style.display = "flex";
-        popupShown = true;
+    function addRandomTile() {
+      const empty = [];
+      for (let r = 0; r < 4; r++) {
+        for (let c = 0; c < 4; c++) {
+          if (grid[r][c] === 0) empty.push([r, c]);
+        }
       }
+      if (empty.length === 0) return;
+      const [r, c] = empty[Math.floor(Math.random() * empty.length)];
+      grid[r][c] = Math.random() < 0.9 ? 2 : 4;
+    }
+
+    function render() {
+      gridElement.innerHTML = "";
+
+      grid.flat().forEach(value => {
+        const cell = document.createElement("div");
+        cell.className = "cell";
+        cell.textContent = value === 0 ? "" : value;
+        cell.style.background = tileColors[value] || "#3c3a32";
+        cell.style.color = value >= 8 ? "#f9f6f2" : "#776e65";
+
+        if (value === 128 && !popupShown) {
+          popup.style.display = "flex";
+          popupShown = true;
+        }
+
+        gridElement.appendChild(cell);
+      });
+    }
+
+    function slide(row) {
+      let arr = row.filter(v => v !== 0);
+      for (let i = 0; i < arr.length - 1; i++) {
+        if (arr[i] === arr[i + 1]) {
+          arr[i] *= 2;
+          arr[i + 1] = 0;
+        }
+      }
+      arr = arr.filter(v => v !== 0);
+      while (arr.length < 4) arr.push(0);
+      return arr;
+    }
+
+    function rotateGrid() {
+      grid = grid[0].map((_, i) => grid.map(row => row[i]).reverse());
+    }
+
+    function moveLeft() {
+      let moved = false;
+      for (let r = 0; r < 4; r++) {
+        const newRow = slide(grid[r]);
+        if (grid[r].toString() !== newRow.toString()) moved = true;
+        grid[r] = newRow;
+      }
+      if (moved) addRandomTile();
+    }
+
+    document.addEventListener("keydown", e => {
+      if (popupShown) return;
+
+      switch (e.key) {
+        case "ArrowLeft":
+          moveLeft();
+          break;
+        case "ArrowUp":
+          rotateGrid();
+          moveLeft();
+          rotateGrid();
+          rotateGrid();
+          rotateGrid();
+          break;
+        case "ArrowRight":
+          rotateGrid();
+          rotateGrid();
+          moveLeft();
+          rotateGrid();
+          rotateGrid();
+          break;
+        case "ArrowDown":
+          rotateGrid();
+          rotateGrid();
+          rotateGrid();
+          moveLeft();
+          rotateGrid();
+          break;
+      }
+      render();
     });
-  }
 
-  function slide(row) {
-    row = row.filter(v => v);
-    for (let i = 0; i < row.length - 1; i++) {
-      if (row[i] === row[i + 1]) {
-        row[i] *= 2;
-        row[i + 1] = 0;
-      }
-    }
-    return row.filter(v => v).concat(Array(4 - row.filter(v => v).length).fill(0));
-  }
+    popup.addEventListener("click", () => popup.style.display = "none");
 
-  function moveLeft() {
-    let moved = false;
-    for (let r = 0; r < 4; r++) {
-      const newRow = slide(grid[r]);
-      if (grid[r].toString() !== newRow.toString()) moved = true;
-      grid[r] = newRow;
-    }
-    if (moved) addRandomTile();
-  }
+    init();
+  </script>
 
-  function rotateGrid() {
-    grid = grid[0].map((_, i) => grid.map(row => row[i]).reverse());
-  }
-
-  document.addEventListener("keydown", e => {
-    if (popupShown) return;
-
-    if (e.key === "ArrowLeft") moveLeft();
-    if (e.key === "ArrowDown") { rotateGrid(); moveLeft(); rotateGrid(); rotateGrid(); rotateGrid(); }
-    if (e.key === "ArrowRight") { rotateGrid(); rotateGrid(); moveLeft(); rotateGrid(); rotateGrid(); }
-    if (e.key === "ArrowUp") { rotateGrid(); rotateGrid(); rotateGrid(); moveLeft(); rotateGrid(); }
-
-    render();
-  });
-
-  popup.addEventListener("click", () => popup.style.display = "none");
-
-  init();
-</script>
 </body>
 </html>
