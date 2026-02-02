@@ -191,7 +191,7 @@
 
       switch (e.key) {
         case "ArrowLeft": moveLeft(); break;
-        case "ArrowUp":
+        case "ArrowDown":
           rotateGrid(); moveLeft();
           rotateGrid(); rotateGrid(); rotateGrid();
           break;
@@ -200,7 +200,7 @@
           moveLeft();
           rotateGrid(); rotateGrid();
           break;
-        case "ArrowDown":
+        case "ArrowUp":
           rotateGrid(); rotateGrid(); rotateGrid();
           moveLeft();
           rotateGrid();
@@ -211,12 +211,12 @@
 
     function handleYes() {
       popupText.textContent = "See you at February 14 Baby ❤️🥹";
-      setTimeout(() => popup.style.display = "none", 1500);
+      setTimeout(() => popup.style.display = "none", 4500);
     }
 
     function handleNo() {
       popupText.textContent = "bakit? Sama ako :( 💔🙂";
-      setTimeout(() => popup.style.display = "none", 1500);
+      setTimeout(() => popup.style.display = "none", 4500);
     }
 
     init();
