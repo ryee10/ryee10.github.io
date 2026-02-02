@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Lliana<3</title>
+  <title>Lliana</title>
 
   <style>
     body {
@@ -218,6 +218,7 @@
       render();
     });
 
+    /* === RUN-AWAY NO BUTTON (NO AUTO-YES) === */
     function moveNoButton() {
       dodgeCount++;
 
@@ -227,15 +228,14 @@
       const x = Math.random() * maxX - maxX / 2;
       const y = Math.random() * maxY - maxY / 2;
 
-      noBtn.style.transition = dodgeCount > 6 ? "transform 0.1s" : "transform 0.25s";
+      noBtn.style.transition = dodgeCount > 6
+        ? "transform 0.1s"
+        : "transform 0.25s";
+
       noBtn.style.transform = `translate(${x}px, ${y}px)`;
 
       if (dodgeCount === 5) {
         noBtn.textContent = "Sama 😭";
-      }
-
-      if (dodgeCount >= 10) {
-        handleYes();
       }
     }
 
@@ -244,7 +244,7 @@
 
     function handleYes() {
       popupText.textContent = "See you at February 14 Baby ❤️🥹";
-      setTimeout(() => popup.style.display = "none", 4500);
+      setTimeout(() => popup.style.display = "none", 12000);
     }
 
     init();
@@ -252,4 +252,5 @@
 
 </body>
 </html>
+
 
