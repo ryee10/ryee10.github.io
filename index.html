@@ -127,9 +127,9 @@
     if (popupShown) return;
 
     if (e.key === "ArrowLeft") moveLeft();
-    if (e.key === "ArrowUp") { rotateGrid(); moveLeft(); rotateGrid(); rotateGrid(); rotateGrid(); }
+    if (e.key === "ArrowDown") { rotateGrid(); moveLeft(); rotateGrid(); rotateGrid(); rotateGrid(); }
     if (e.key === "ArrowRight") { rotateGrid(); rotateGrid(); moveLeft(); rotateGrid(); rotateGrid(); }
-    if (e.key === "ArrowDown") { rotateGrid(); rotateGrid(); rotateGrid(); moveLeft(); rotateGrid(); }
+    if (e.key === "ArrowUp") { rotateGrid(); rotateGrid(); rotateGrid(); moveLeft(); rotateGrid(); }
 
     render();
   });
