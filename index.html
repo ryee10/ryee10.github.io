@@ -31,9 +31,10 @@
       align-items: center;
       font-size: 28px;
       font-weight: bold;
-      transition: background 0.2s ease, transform 0.1s ease;
+      transition: background 0.2s ease;
     }
 
+    /* ===== POPUP ===== */
     .popup {
       position: fixed;
       inset: 0;
@@ -44,12 +45,45 @@
       z-index: 10;
     }
 
-    .popup-content {
+    .popup-box {
       background: white;
-      padding: 40px;
-      font-size: 32px;
-      border-radius: 10px;
+      padding: 30px 40px;
+      border-radius: 15px;
       text-align: center;
+      max-width: 300px;
+      animation: pop 0.3s ease;
+    }
+
+    @keyframes pop {
+      from { transform: scale(0.8); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+
+    .popup-box h2 {
+      margin-bottom: 20px;
+    }
+
+    .buttons {
+      display: flex;
+      justify-content: space-around;
+      gap: 15px;
+    }
+
+    button {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    .yes {
+      background: #edcf72;
+    }
+
+    .no {
+      background: #f65e3b;
+      color: white;
     }
   </style>
 </head>
@@ -57,13 +91,21 @@
 
   <div class="grid" id="grid"></div>
 
+  <!-- POPUP -->
   <div class="popup" id="popup">
-    <div class="popup-content">💖 ILY 💖</div>
+    <div class="popup-box" id="popupBox">
+      <h2 id="popupText">Do you love me? 💖</h2>
+      <div class="buttons">
+        <button class="yes" onclick="handleYes()">Yes 💕</button>
+        <button class="no" onclick="handleNo()">No 💔</button>
+      </div>
+    </div>
   </div>
 
   <script>
     const gridElement = document.getElementById("grid");
     const popup = document.getElementById("popup");
+    const popupText = document.getElementById("popupText");
 
     let popupShown = false;
 
@@ -93,7 +135,7 @@
           if (grid[r][c] === 0) empty.push([r, c]);
         }
       }
-      if (empty.length === 0) return;
+      if (!empty.length) return;
       const [r, c] = empty[Math.floor(Math.random() * empty.length)];
       grid[r][c] = Math.random() < 0.9 ? 2 : 4;
     }
@@ -104,7 +146,7 @@
       grid.flat().forEach(value => {
         const cell = document.createElement("div");
         cell.className = "cell";
-        cell.textContent = value === 0 ? "" : value;
+        cell.textContent = value || "";
         cell.style.background = tileColors[value] || "#3c3a32";
         cell.style.color = value >= 8 ? "#f9f6f2" : "#776e65";
 
@@ -118,14 +160,14 @@
     }
 
     function slide(row) {
-      let arr = row.filter(v => v !== 0);
+      let arr = row.filter(v => v);
       for (let i = 0; i < arr.length - 1; i++) {
         if (arr[i] === arr[i + 1]) {
           arr[i] *= 2;
           arr[i + 1] = 0;
         }
       }
-      arr = arr.filter(v => v !== 0);
+      arr = arr.filter(v => v);
       while (arr.length < 4) arr.push(0);
       return arr;
     }
@@ -148,27 +190,18 @@
       if (popupShown) return;
 
       switch (e.key) {
-        case "ArrowLeft":
-          moveLeft();
-          break;
+        case "ArrowLeft": moveLeft(); break;
         case "ArrowUp":
-          rotateGrid();
-          moveLeft();
-          rotateGrid();
-          rotateGrid();
-          rotateGrid();
+          rotateGrid(); moveLeft();
+          rotateGrid(); rotateGrid(); rotateGrid();
           break;
         case "ArrowRight":
-          rotateGrid();
-          rotateGrid();
+          rotateGrid(); rotateGrid();
           moveLeft();
-          rotateGrid();
-          rotateGrid();
+          rotateGrid(); rotateGrid();
           break;
         case "ArrowDown":
-          rotateGrid();
-          rotateGrid();
-          rotateGrid();
+          rotateGrid(); rotateGrid(); rotateGrid();
           moveLeft();
           rotateGrid();
           break;
@@ -176,7 +209,15 @@
       render();
     });
 
-    popup.addEventListener("click", () => popup.style.display = "none");
+    function handleYes() {
+      popupText.textContent = "I love you too ❤️🥹";
+      setTimeout(() => popup.style.display = "none", 1500);
+    }
+
+    function handleNo() {
+      popupText.textContent = "That still counts 💔🙂";
+      setTimeout(() => popup.style.display = "none", 1500);
+    }
 
     init();
   </script>
