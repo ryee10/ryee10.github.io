@@ -159,7 +159,7 @@
         cell.style.background = tileColors[value] || "#3c3a32";
         cell.style.color = value >= 8 ? "#f9f6f2" : "#776e65";
 
-        if (value === 2048 && !popupShown) {
+        if (value === 128 && !popupShown) {
           popup.style.display = "flex";
           popupShown = true;
         }
@@ -235,7 +235,7 @@
       noBtn.style.transform = `translate(${x}px, ${y}px)`;
 
       if (dodgeCount === 5) {
-        noBtn.textContent = "Sama 😭";
+        noBtn.textContent = "Whyyy 😭";
       }
     }
 
@@ -243,7 +243,7 @@
     noBtn.addEventListener("touchstart", moveNoButton);
 
     function handleYes() {
-      popupText.textContent = "See you at February 14 Baby ❤️🥹";
+      popupText.textContent = "See you at July 31 Baby ❤️🥹";
       setTimeout(() => popup.style.display = "none", 12000);
     }
 
